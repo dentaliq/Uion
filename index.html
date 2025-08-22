@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حجز عبر تيليجرام</title>
+<style>
+  body { font-family: Arial; background:#f0f2f5; display:flex; justify-content:center; align-items:center; height:100vh; }
+  .form-container { background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:100%; max-width:400px; }
+  h2{text-align:center;margin-bottom:20px;}
+  label{display:block;margin:10px 0 5px;}
+  input,textarea{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;}
+  button{margin-top:15px;width:100%;padding:12px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;font-size:16px;}
+  button:hover{background:#0056b3;}
+  .status{margin-top:10px;text-align:center;font-weight:bold;}
+</style>
+</head>
+<body>
+<div class="form-container">
+  <h2>حجز</h2>
+  <label for="name">الاسم:</label>
+  <input type="text" id="name" placeholder="أدخل اسمك">
+  <label for="age">العمر:</label>
+  <input type="number" id="age" placeholder="أدخل عمرك">
+  <label for="message">ملاحظات:</label>
+  <textarea id="message" rows="3" placeholder="ملاحظات إضافية"></textarea>
+  <button id="sendBtn">إرسال</button>
+  <div class="status" id="status"></div>
+</div>
+<script>
+const sendBtn=document.getElementById('sendBtn');
+const statusEl=document.getElementById('status');
+// ضع رابط Worker النهائي هنا
+const WORKER_URL='https://fc025528.uion-4a9.pages.dev/';
+sendBtn.addEventListener('click',()=>{
+  const name=document.getElementById('name').value.trim();
+  const age=document.getElementById('age').value.trim();
+  const message=document.getElementById('message').value.trim();
+  if(!name||!age){statusEl.textContent='الرجاء ملء الاسم والعمر';statusEl.style.color='red';return;}
+  const fullMessage=`حجز جديد:\nالاسم: ${name}\nالعمر: ${age}\nملاحظات: ${message}`;
+  statusEl.textContent='جارٍ الإرسال...';statusEl.style.color='black';
+  fetch(`${WORKER_URL}?text=${encodeURIComponent(fullMessage)}`)
+    .then(res=>res.text())
+    .then(data=>{statusEl.textContent=data;statusEl.style.color='green';})
+    .catch(err=>{console.error(err);statusEl.textContent='حدث خطأ أثناء الإرسال';statusEl.style.color='red';});
+});
+</script>
+</body>
+</html>
+
